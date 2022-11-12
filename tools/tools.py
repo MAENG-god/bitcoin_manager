@@ -5,7 +5,7 @@ def rsi(df):
     ad = 0
     d = 0
     # cur = cur_price - df.iloc[-1]['open']
-    for i in df.iloc[-1:-15:-1]['size']:
+    for i in df.iloc[-1:-15:-1]['body']:
         if i >= 0:
             au += i
             u += 1
@@ -25,17 +25,57 @@ def rsi(df):
 
 # 캔들 모양
 def candle(df):
-    if df.iloc[-1]['high'] - max(df.iloc[-1]['open'], df.iloc[-1]['close']) > df.iloc[-1]['body'] * 1:
+    if df.iloc[-2]['high'] - max(df.iloc[-2]['open'], df.iloc[-2]['close']) > abs(df.iloc[-2]['body']) * 1 and abs(df.iloc[-2]['body']) > 20:
         return "meteor" # 유성형
-    if min(df.iloc[-1]['open'], df.iloc[-1]['close']) - df.iloc[-1]['low'] > df.iloc[-1]['body'] * 2:
+    if min(df.iloc[-2]['open'], df.iloc[-2]['close']) - df.iloc[-2]['low'] > abs(df.iloc[-2]['body']) * 1 and abs(df.iloc[-2]['body']) > 20:
         return "hammer" # 망치형
         
 # 거래량 비교
 def volume(df):
     volume1 = df.iloc[-1]['volume']
     volume2 = df.iloc[-2]['volume']
-    volume3 = df.iloc[-3]['volume']
-    if volume1 > volume2 + volume3:
+    
+    if volume1 < volume2:
         return "go"
     else:
         return "stop"
+    
+#이평선
+def ma(df):
+    ma7 = sum(df.iloc[-1:-8:-1]['close']) / 7
+    ma25 = sum(df.iloc[-1:-26:-1]['close']) / 25
+    ma_1 = ma7 - ma25
+    
+    ma7 = sum(df.iloc[-2:-9:-1]['close']) / 7
+    ma25 = sum(df.iloc[-2:-27:-1]['close']) / 25
+    ma_2 = ma7 - ma25
+    
+    ma7 = sum(df.iloc[-3:-10:-1]['close']) / 7
+    ma25 = sum(df.iloc[-3:-28:-1]['close']) / 25
+    ma_3 = ma7 - ma25
+    
+   
+    if ma_1 - ma_2 > 0 and ma_2 - ma_3 > 0:
+        return "long"
+    elif ma_1 - ma_2 < 0 and ma_2 - ma_3 < 0:
+        return "short"
+    
+#맹's 캔들 5개로 상승추세 하강추세 분석
+def five_candle(df):
+    candles = df.iloc[-1:-6:-1]['body']
+    upCandles = []
+    downCandles = []
+    for candle in candles:
+        if candle > 0:
+            upCandles.append(candle)
+        else:
+            downCandles.append(candle)
+    if len(upCandles) == 0 or len(downCandles) == 0:
+        return "stop"
+    up = sum(upCandles)/len(upCandles)
+    down = sum(downCandles)/len(downCandles)
+    print(up, down)
+    if up > abs(down):
+        return "long"
+    else:
+        return "short"
