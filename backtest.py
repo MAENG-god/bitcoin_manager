@@ -25,6 +25,22 @@ class Backtest:
         self.lose_price = 0
         
         self.maxLoseMoney = maxLoseMoney
+        
+        self.epoch = 0
+        self.win = 0
+    
+    def buy_sell(self, df):
+        if rsi(df) > 30 and rsi(df) < 70 and volume(df) == "go":
+            if ma(df) == "short":
+                return "short"
+            elif ma(df) == "long":
+                return "long"
+        elif rsi(df) <= 30:
+            if candle(df) == "hammer":
+                return "long"
+        elif rsi(df) >= 70:
+            if candle(df) == "meteor":
+                return "short"
     
     def excute(self):
         maxLoseMoney = self.maxLoseMoney
@@ -33,23 +49,14 @@ class Backtest:
         for i in range(26, len(self.data)):
             df = self.data[i - 26:i + 1]
             if self.position == None:
-                if rsi(df) > 30 and rsi(df) < 70 and volume(df) == "go":
-                    if ma(df) == "short":
-                            self.position = "short"
-                            self.price = self.data.iloc[i]['close']
-                            self.lose_price = self.price * (1 + lose)
-                    elif ma(df) == "long":
-                            self.position = "long"
-                            self.price = self.data.iloc[i]['close']
-                            self.lose_price = self.price * (1 - lose)
-                elif rsi(df) > 70:
-                            self.position = "short"
-                            self.price = self.data.iloc[i]['close']
-                            self.lose_price = self.price * (1 + lose)
-                else:
-                            self.position = "long"
-                            self.price = self.data.iloc[i]['close']
-                            self.lose_price = self.price * (1 - lose)
+                if self.buy_sell(df) == "short":
+                    self.position = "short"
+                    self.price = self.data.iloc[i]['close']
+                    self.lose_price = self.price * (1 + lose)
+                if self.buy_sell(df) == "long":
+                    self.position = "long"
+                    self.price = self.data.iloc[i]['close']
+                    self.lose_price = self.price * (1 - lose)
             elif self.position == "short":
                 sell_price = self.data.iloc[i]['close']
                 high_price = self.data.iloc[i]['high']
@@ -99,7 +106,7 @@ class Backtest:
         return self.ror
 
 
-data = dataset(symbol="BTC/USDT", timeframe="5m", limit=4*24*1)
+data = dataset(symbol="BTC/USDT", timeframe="15m", limit=4 * 24*5)
 backtest = Backtest(data=data, balance=10000, leverage=1, maxLoseMoney=0.1)
 backtest.excute()
 backtest.result()

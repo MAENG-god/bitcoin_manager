@@ -25,39 +25,45 @@ def rsi(df):
 
 # 캔들 모양
 def candle(df):
-    if df.iloc[-2]['high'] - max(df.iloc[-2]['open'], df.iloc[-2]['close']) > abs(df.iloc[-2]['body']) * 1 and abs(df.iloc[-2]['body']) > 20:
+    if df.iloc[-2]['high'] - max(df.iloc[-2]['open'], df.iloc[-2]['close']) > abs(df.iloc[-2]['body']) * 1:
         return "meteor" # 유성형
-    if min(df.iloc[-2]['open'], df.iloc[-2]['close']) - df.iloc[-2]['low'] > abs(df.iloc[-2]['body']) * 1 and abs(df.iloc[-2]['body']) > 20:
+    if min(df.iloc[-2]['open'], df.iloc[-2]['close']) - df.iloc[-2]['low'] > abs(df.iloc[-2]['body']) * 1:
         return "hammer" # 망치형
         
 # 거래량 비교
 def volume(df):
     volume1 = df.iloc[-1]['volume']
     volume2 = df.iloc[-2]['volume']
+    meanVolume = sum(df.iloc[-1:-8:-1]['volume']) / 7
     
-    if volume1 < volume2:
+    if volume1 > meanVolume:
         return "go"
     else:
         return "stop"
     
 #이평선
 def ma(df):
+    ma3 = sum(df.iloc[-1:-4:-1]['close']) / 3
     ma7 = sum(df.iloc[-1:-8:-1]['close']) / 7
     ma25 = sum(df.iloc[-1:-26:-1]['close']) / 25
-    ma_1 = ma7 - ma25
+    # ma_1 = ma7 - ma25
     
-    ma7 = sum(df.iloc[-2:-9:-1]['close']) / 7
-    ma25 = sum(df.iloc[-2:-27:-1]['close']) / 25
-    ma_2 = ma7 - ma25
+    # ma7 = sum(df.iloc[-2:-9:-1]['close']) / 7
+    # ma25 = sum(df.iloc[-2:-27:-1]['close']) / 25
+    # ma_2 = ma7 - ma25
     
-    ma7 = sum(df.iloc[-3:-10:-1]['close']) / 7
-    ma25 = sum(df.iloc[-3:-28:-1]['close']) / 25
-    ma_3 = ma7 - ma25
+    # ma7 = sum(df.iloc[-3:-10:-1]['close']) / 7
+    # ma25 = sum(df.iloc[-3:-28:-1]['close']) / 25
+    # ma_3 = ma7 - ma25
     
    
-    if ma_1 - ma_2 > 0 and ma_2 - ma_3 > 0:
+    # if ma_1 - ma_2 > 0 and ma_2 - ma_3 > 0:
+    #     return "long"
+    # elif ma_1 - ma_2 < 0 and ma_2 - ma_3 < 0:
+    #     return "short"
+    if ma3 > ma7 and ma7 > ma25:
         return "long"
-    elif ma_1 - ma_2 < 0 and ma_2 - ma_3 < 0:
+    elif ma3 < ma7 and ma7 < ma25:
         return "short"
     
 #맹's 캔들 5개로 상승추세 하강추세 분석
@@ -74,7 +80,6 @@ def five_candle(df):
         return "stop"
     up = sum(upCandles)/len(upCandles)
     down = sum(downCandles)/len(downCandles)
-    print(up, down)
     if up > abs(down):
         return "long"
     else:
