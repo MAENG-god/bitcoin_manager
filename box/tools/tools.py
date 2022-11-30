@@ -1,23 +1,24 @@
 # rsi 지표
 def rsi(df): 
     au = 0
-    u = 0
     ad = 0
-    d = 0
-    # cur = cur_price - df.iloc[-1]['open']
-    for i in df.iloc[-1:-15:-1]['body']:
+
+    for i in df.iloc[-2:-16:-1]['body']:
         if i >= 0:
             au += i
-            u += 1
         else:
             ad += -i
-            d += 1
-    au /= u
-    ad /= d
-    # if cur >= 0:
-    #     au += cur / 14
-    # else:
-    #     ad += cur / 14 * (-1)
+    au /= 14
+    ad /= 14
+
+    cur =  df.iloc[-1]['body']
+    if cur > 0:
+        au = (13 * au + cur) / 14
+        ad = ad * 13 / 14
+    else:
+        au = au * 13 / 14
+        ad = (13 * ad - cur) / 14
+    
     rs = au / ad
     rsi = rs / ( 1 + rs) * 100
     

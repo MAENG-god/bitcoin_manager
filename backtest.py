@@ -1,5 +1,5 @@
-from tools.dataset import dataset
-from tools.tools import *
+from box.tools.dataset import dataset
+from box.tools.tools import *
 
 class Backtest:
     def __init__(self, data, balance, leverage, maxLoseMoney):
@@ -30,17 +30,10 @@ class Backtest:
         self.win = 0
     
     def buy_sell(self, df):
-        if rsi(df) > 30 and rsi(df) < 70 and volume(df) == "go":
-            if ma(df) == "short":
-                return "short"
-            elif ma(df) == "long":
-                return "long"
-        elif rsi(df) <= 30:
-            if candle(df) == "hammer":
-                return "long"
-        elif rsi(df) >= 70:
-            if candle(df) == "meteor":
-                return "short"
+        if rsi(df) < 30:
+            return "long"
+        elif rsi(df) > 70:
+            return "short"
     
     def excute(self):
         maxLoseMoney = self.maxLoseMoney
@@ -106,7 +99,7 @@ class Backtest:
         return self.ror
 
 
-data = dataset(symbol="BTC/USDT", timeframe="15m", limit=4 * 24*5)
+data = dataset(symbol="BTC/USDT", timeframe="1h", limit=1 * 24*30)
 backtest = Backtest(data=data, balance=10000, leverage=1, maxLoseMoney=0.1)
 backtest.excute()
 backtest.result()
