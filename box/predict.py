@@ -12,10 +12,10 @@ class predictNextCandle():
         percent = history_analysis(self.df, df.iloc[0]['body']/df.iloc[0]['volume'], df.iloc[1]['body']/df.iloc[1]['volume'], df.iloc[2]['body']/df.iloc[2]['volume'], df.iloc[3]['body']/df.iloc[3]['volume'], df.iloc[4]['body']/df.iloc[4]['volume'], dfRsi)
         if percent == None:
             return "none"
-        elif percent > 70:
+        elif percent > 60:
             print("올라갈 확률:{}".format(percent))
             return "up"
-        elif percent < 30:
+        elif percent < 40:
             print("내려갈 확률:{}".format(100 - percent))
             return "down"
         else:
