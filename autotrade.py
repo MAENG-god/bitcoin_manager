@@ -83,9 +83,10 @@ while True:
             newData = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
             if newData.iloc[-2]['body'] - data.iloc[-2]['body'] != 0:
                 close_position(binance, cur_price, state)
-                if (state['win'] + state['lose']) % 5 == 0:
-                    messeage = "승리 횟수:{}, 패배 횟수: {}, 잔고:{}".format(state['win'], state['lose'], state['balance'])
-                    send_message(messeage)
+                messeage = "승리 횟수:{}, 패배 횟수: {}, 잔고:{}".format(state['win'], state['lose'], state['balance'])
+                send_message(messeage)
+                messeage = "---------------------\n\n\n------------------------"
+                send_message(messeage)
             else:
                 time.sleep(1)
             

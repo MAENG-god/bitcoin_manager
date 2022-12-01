@@ -8,12 +8,12 @@ def history_analysis(df, df1, df2, df3, df4, df5, sumVol):
         result = abs((currentData - pastData))
         # result = sum(result) / 7
         result = max(result)
-        if result < 55:
+        if result < 30:
             if result == 0:
                 continue
             pastSumVol = sum(df.iloc[i-6:i+1]['volume'])
             volIndicator = abs(sumVol - pastSumVol)
-            if volIndicator < 5555:
+            if volIndicator < 3000:
                 if df.iloc[i + 1]['body'] > 0:
                     candleList.append(1)
                 else:
