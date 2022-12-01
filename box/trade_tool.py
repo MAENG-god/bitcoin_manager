@@ -54,8 +54,10 @@ def close_position(binance, cur_price, state):
         
         if cur_price > state['enterPrice']:
             state['win'] += 1
+            send_message("롱포지션 정리, 결과: 승, 잔액:{}".format(state['balance']))
         else:
             state['lose'] += 1
+            send_message("롱포지션 정리, 결과: 패, 잔액:{}".format(state['balance']))         
         state['enterPrice'] = 0
         
     elif state['position'] == "short":
@@ -69,6 +71,8 @@ def close_position(binance, cur_price, state):
         
         if cur_price < state['enterPrice']:
             state['win'] += 1
+            send_message("숏포지션 정리, 결과: 승, 잔액:{}".format(state['balance']))
         else:
             state['lose'] += 1
+            send_message("숏포지션 정리, 결과: 패, 잔액:{}".format(state['balance'])) 
         state['enterPrice'] = 0

@@ -50,7 +50,7 @@ while True:
         cur_price = ticker['last']
         print(state['position'])
         if state['position'] == None:
-            data = dataset(symbol="BTC/USDT", timeframe="5m", limit=12 * 24*20)
+            data = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
             balance = binance.fetch_balance()
             usdt = balance['free']['USDT']
             state['balance'] = usdt
@@ -64,11 +64,23 @@ while True:
             if state['position'] == 'long':
                 if state['cutPrice'] > cur_price:
                     close_position(binance, cur_price, state)
+                    while True:
+                        newData = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+                        if newData.iloc[-2]['body'] - data.iloc[-2]['body'] != 0:
+                            break
+                        else:
+                            time.sleep(10)                    
             elif state['position'] == 'short':
                 if state['cutPrice'] < cur_price:
                     close_position(binance, cur_price, state)
-                    
-            newData = dataset(symbol="BTC/USDT", timeframe="5m", limit=12 * 24*20)
+                    while True:
+                        newData = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+                        if newData.iloc[-2]['body'] - data.iloc[-2]['body'] != 0:
+                            break
+                        else:
+                            time.sleep(10)    
+                            
+            newData = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
             if newData.iloc[-2]['body'] - data.iloc[-2]['body'] != 0:
                 close_position(binance, cur_price, state)
                 if (state['win'] + state['lose']) % 5 == 0:
@@ -78,5 +90,5 @@ while True:
                 time.sleep(1)
             
     except Exception as e:
-        # send_message(e)
+        send_message(("에러메세지: {}".format(e)))
         print("에러메세지: {}".format(e))
