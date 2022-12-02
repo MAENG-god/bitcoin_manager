@@ -3,6 +3,7 @@ import time
 from box.tools.dataset import dataset
 from box.trade_tool import *
 from box.predict_tool import PredictNextCandle
+from telegram.ext import CommandHandler, Updater
 
 api_key = "mF7PJ1yW3YtETZi4uxjDpf5NQGJO2bKedAEMnzBagdux37s5vA8IKnAwhq5CPHZy"
 secret = "rsffphg33Pu3CQ1ZUwbiWOYRKKzKGf7hK5YAo9gvjWjYeNYlesTtD170nLE2S84i"
@@ -44,8 +45,43 @@ state = {
     'cutPrice': None,
 }
 
+#텔레그램 명령어
+tele_token = "5210226721:AAG95BNFRPXRME5MU_ytI_JIx7wgiW1XASU"
+chat_id = 5135122806
+
+updater = Updater(token=tele_token, use_context=True)
+dispatcher = updater.dispatcher
+
+stopAndGO = 1
+
+def check(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="정상 작동중")
+
+def stop_trade(update, context):
+    global stopAndGO
+    context.bot.send_message(chat_id=update.effective_chat.id, text="시스템 중지, 재시작 명령어: continue")
+    stopAndGO = 0
+
+def continue_trade(update, context):
+    global stopAndGO
+    context.bot.send_message(chat_id=update.effective_chat.id, text="시스템 재가동")
+    stopAndGO = 1
+
+check_handler = CommandHandler('check', check)
+stop_trade_handler = CommandHandler('stop', stop_trade)
+continue_trade_handler = CommandHandler('continue', continue_trade)
+dispatcher.add_handler(check_handler)
+dispatcher.add_handler(stop_trade_handler)
+dispatcher.add_handler(continue_trade_handler)
+
+updater.start_polling()
+
 while True:
     try:
+        if stopAndGO == 0:
+            while stopAndGO == 0:
+                time.sleep(1)
+        
         ticker = binance.fetch_ticker("BTC/USDT")
         cur_price = ticker['last']
         print(state['position'])
@@ -83,9 +119,9 @@ while True:
             newData = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
             if newData.iloc[-2]['body'] - data.iloc[-2]['body'] != 0:
                 close_position(binance, cur_price, state)
-                messeage = "승리 횟수:{}, 패배 횟수: {}, 잔고:{}".format(state['win'], state['lose'], state['balance'])
+                messeage = "승리 횟수:{}, 패배 횟수: {}".format(state['win'], state['lose'])
                 send_message(messeage)
-                messeage = "---------------------\n\n\n------------------------"
+                messeage = "--------------------------------------\n--------------------------------------\n--------------------------------------"
                 send_message(messeage)
             else:
                 time.sleep(1)
