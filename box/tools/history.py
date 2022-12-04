@@ -10,7 +10,7 @@ def history_analysis(df, df1, df2, df3, df4, df5, sumVol):
         result = max(result)
         if result < 30:
             if result == 0:
-                continue
+                break
             pastSumVol = sum(df.iloc[i-6:i+1]['volume'])
             volIndicator = abs(sumVol - pastSumVol)
             if volIndicator < 3000:

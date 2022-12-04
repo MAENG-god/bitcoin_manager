@@ -37,27 +37,47 @@ class predictNextCandle():
             if y_hat != "none":
                 self.epoch += 1
                 if y_hat == y:
+                    if y_hat == "up":
+                        if df.iloc[-1]['low']/df.iloc[-1]['open'] < 0.99:
+                            print("예측실패")
+                            self.ror *= 0.9 - 0.008
+                            continue
+                    elif y_hat == "short":
+                        if df.iloc[-1]['high']/df.iloc[-1]['open'] > 1.01:
+                            print("예측실패")
+                            self.ror *= 0.9 - 0.008
+                            continue
                     print("예측성공")
                     print("캔들변화량: {}".format(df.iloc[-1]['body']))
                     self.profit += abs(df.iloc[-1]['body'])
                     print("-----------------------")
                     self.win += 1
                     if df.iloc[-1]['body'] > 0:
-                        self.ror *= abs(df.iloc[-1]['close']/df.iloc[-1]['open']) - 0.08
+                        self.ror *= (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - 0.008
                     else:
-                        self.ror *= 2 - abs(df.iloc[-1]['close']/df.iloc[-1]['open']) - 0.08
+                        self.ror *= 2 - (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - 0.008
                 else:
+                    if y_hat == "up":
+                        if df.iloc[-1]['low']/df.iloc[-1]['open'] < 0.99:
+                            print("예측실패")
+                            self.ror *= 0.9 - 0.008
+                            continue
+                    elif y_hat == "short":
+                        if df.iloc[-1]['high']/df.iloc[-1]['open'] > 1.01:
+                            print("예측실패")
+                            self.ror *= 0.9 - 0.008
+                            continue
                     print("예측실패")
                     print("캔들변화량: {}".format(df.iloc[-1]['body']))
                     self.loss += abs(df.iloc[-1]['body'])         
                     print("-----------------------")
                     if df.iloc[-1]['body'] > 0:
-                        self.ror *= 2 - abs(df.iloc[-1]['close']/df.iloc[-1]['open']) - 0.08
+                        self.ror *= 2 - (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - 0.008
                     else:
-                        self.ror *= abs(df.iloc[-1]['close']/df.iloc[-1]['open']) - 0.08
+                        self.ror *= (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - 0.008
     def summary(self):
         print("예측 정확도: {}%".format(self.win / self.epoch * 100))
-        print("이익: {}, 손해: {}, 수익률:{}%".format(self.profit, self.loss, self.ror * 100))
+        print("이익: {}, 손해: {}, 수익률:{}%".format(self.profit, self.loss, self.ror * 100 - 100))
         print("총 실행 횟수: {}회".format(self.epoch))
 data = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
 predict = predictNextCandle(data)
