@@ -118,11 +118,22 @@ while True:
                             
             newData = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
             if newData.iloc[-2]['body'] - data.iloc[-2]['body'] != 0:
-                close_position(binance, cur_price, state)
-                messeage = "승리 횟수:{}, 패배 횟수: {}".format(state['win'], state['lose'])
-                send_message(messeage)
-                messeage = "--------------------------------------\n--------------------------------------\n--------------------------------------"
-                send_message(messeage)
+                predictor = PredictNextCandle(newData)
+                predict = predictor.excute()
+                if predict == 'up' and state['position'] == "long":
+                    messeage = "롱포지션 유지"
+                    send_message(messeage)
+                    data = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+                elif predict == 'down' and state['position'] == "short":
+                    messeage = "숏포지션 유지"
+                    send_message(messeage)
+                    data = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+                else:
+                    close_position(binance, cur_price, state)
+                    messeage = "승리 횟수:{}, 패배 횟수: {}".format(state['win'], state['lose'])
+                    send_message(messeage)
+                    messeage = "--------------------------------------\n--------------------------------------\n--------------------------------------"
+                    send_message(messeage)
             else:
                 time.sleep(1)
             
