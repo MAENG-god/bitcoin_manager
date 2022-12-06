@@ -66,6 +66,7 @@ def continue_trade(update, context):
     global stopAndGO
     context.bot.send_message(chat_id=update.effective_chat.id, text="시스템 재가동")
     stopAndGO = 1
+    
 
 check_handler = CommandHandler('check', check)
 stop_trade_handler = CommandHandler('stop', stop_trade)
