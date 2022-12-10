@@ -31,7 +31,7 @@ resp = binance.fapiPrivate_post_leverage({
 balance = binance.fetch_balance()
 usdt = balance['free']['USDT']
 
-messeage = "start trading. balance:{}".format(usdt)
+messeage = "start trading. balance:{.:2f}USDT".format(usdt)
 send_message(messeage)
 print(messeage)
 

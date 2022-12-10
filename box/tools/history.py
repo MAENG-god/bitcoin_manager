@@ -7,8 +7,7 @@ def history_analysis(df, df1, df2, df3, df4, df5, sumVol):
         pastData = np.array([df.iloc[i - 4]['body'], df.iloc[i - 3]['body'], df.iloc[i - 2]['body'], df.iloc[i - 1]['body'], df.iloc[i]['body']])
         result = abs((currentData - pastData))
         result = max(result)
-        li = [i for i in range(5) if currentData[i] * pastData[i] < 0]
-        if result < 40 and len(li) == 0:
+        if result < 30:
             if result == 0:
                 break
             pastSumVol = sum(df.iloc[i-6:i+1]['volume'])
@@ -18,7 +17,7 @@ def history_analysis(df, df1, df2, df3, df4, df5, sumVol):
                     candleList.append(1)
                 else:
                     candleList.append(0)
-    if len(candleList) == 0:
+    if len(candleList) <= 1:
         return None
     predict = sum(candleList) / len(candleList) * 100
     print("일치 횟수: {}".format(len(candleList)))
