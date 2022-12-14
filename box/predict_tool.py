@@ -7,8 +7,8 @@ class PredictNextCandle():
         self.df = df
         
     def predict(self, df):
-        sumVol = sum(df.iloc[0:5]['volume'])
-        percent = history_analysis(self.df, df.iloc[0]['body'], df.iloc[1]['body'], df.iloc[2]['body'], df.iloc[3]['body'], df.iloc[4]['body'], sumVol)
+        curRsi = rsi(df.iloc[-15:])
+        percent = history_analysis(self.df, df.iloc[-1], curRsi)
         if percent == None:
             return "none"
         elif percent > 50:
@@ -20,7 +20,7 @@ class PredictNextCandle():
         else:
             return "none"
     def excute(self):
-        df = self.df[-6:-1]
+        df = self.df[-20:-1]
         y_hat = self.predict(df)
         return y_hat
 

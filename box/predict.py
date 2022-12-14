@@ -10,10 +10,12 @@ class predictNextCandle():
         self.profit = 0
         self.loss = 0
         self.ror = 1
+        self.leverage = 10
+        self.fee = 0.0008 * self.leverage
         
     def predict(self, df):
-        sumVol = sum(df.iloc[0:5]['volume'])
-        percent = history_analysis(self.df, df.iloc[0]['body'], df.iloc[1]['body'], df.iloc[2]['body'], df.iloc[3]['body'], df.iloc[4]['body'], sumVol)
+        curRsi = rsi(df.iloc[-16:-1])
+        percent = history_analysis(self.df, df.iloc[-2], curRsi)
         if percent == None:
             return "none"
         elif percent > 50:
@@ -31,7 +33,7 @@ class predictNextCandle():
             return "down"
     def excute(self):
         for i in range(1475, 1498):
-            df = self.df[i - 4:i + 2]
+            df = self.df[0:i + 2]
             y_hat = self.predict(df)
             y = self.real(df)
             if y_hat != "none":
@@ -40,12 +42,12 @@ class predictNextCandle():
                     if y_hat == "up":
                         if df.iloc[-1]['low']/df.iloc[-1]['open'] < 0.99:
                             print("예측실패")
-                            self.ror *= 0.9 - 0.008
+                            self.ror *= 0.9 - self.fee
                             continue
                     elif y_hat == "short":
                         if df.iloc[-1]['high']/df.iloc[-1]['open'] > 1.01:
                             print("예측실패")
-                            self.ror *= 0.9 - 0.008
+                            self.ror *= 0.9 - self.fee
                             continue
                     print("예측성공")
                     print("캔들변화량: {}".format(df.iloc[-1]['body']))
@@ -53,28 +55,28 @@ class predictNextCandle():
                     print("-----------------------")
                     self.win += 1
                     if df.iloc[-1]['body'] > 0:
-                        self.ror *= (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - 0.008
+                        self.ror *= (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - self.fee
                     else:
-                        self.ror *= 2 - (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - 0.008
+                        self.ror *= 2 - (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - self.fee
                 else:
                     if y_hat == "up":
                         if df.iloc[-1]['low']/df.iloc[-1]['open'] < 0.99:
                             print("예측실패")
-                            self.ror *= 0.9 - 0.008
+                            self.ror *= 0.9 - self.fee
                             continue
                     elif y_hat == "short":
                         if df.iloc[-1]['high']/df.iloc[-1]['open'] > 1.01:
                             print("예측실패")
-                            self.ror *= 0.9 - 0.008
+                            self.ror *= 0.9 - self.fee
                             continue
                     print("예측실패")
                     print("캔들변화량: {}".format(df.iloc[-1]['body']))
                     self.loss += abs(df.iloc[-1]['body'])         
                     print("-----------------------")
                     if df.iloc[-1]['body'] > 0:
-                        self.ror *= 2 - (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - 0.008
+                        self.ror *= 2 - (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - self.fee
                     else:
-                        self.ror *= (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - 0.008
+                        self.ror *= (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - self.fee
     def summary(self):
         print("예측 정확도: {}%".format(self.win / self.epoch * 100))
         print("이익: {}, 손해: {}, 수익률:{}%".format(self.profit, self.loss, self.ror * 100 - 100))

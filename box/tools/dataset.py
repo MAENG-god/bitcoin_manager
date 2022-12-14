@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 
 def dataset(symbol, timeframe, limit):
-    api_key = "mF7PJ1yW3YtETZi4uxjDpf5NQGJO2bKedAEMnzBagdux37s5vA8IKnAwhq5CPHZy"
-    secret = "rsffphg33Pu3CQ1ZUwbiWOYRKKzKGf7hK5YAo9gvjWjYeNYlesTtD170nLE2S84i"
+    api_key = "UbhY6U61Zp51mxCmZgc8OYdHMg9o62O5yBYnzhPAbbkrJpMBHNBuWbrVDW1WXB8I"
+    secret = "tByo1L8nH6wrbC6OVNJg2uQFrzqgxBn4a5LijXBGCb6CasqGCm2TeqbbdItKY3R1"
 
     binance = ccxt.binance(config={
         'apiKey': api_key, 
