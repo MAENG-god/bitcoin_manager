@@ -30,7 +30,7 @@ def history_analysis(df, candle, curRsi):
                 candleList.append(1)
             else:
                 candleList.append(0)
-    if len(candleList) <= 1:
+    if len(candleList) == 0:
         return None
     predict = sum(candleList) / len(candleList) * 100
     print("일치 횟수: {}".format(len(candleList)))

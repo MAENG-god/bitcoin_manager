@@ -32,7 +32,7 @@ class predictNextCandle():
         else:
             return "down"
     def excute(self):
-        for i in range(1475, 1498):
+        for i in range(1405, 1498):
             df = self.df[0:i + 2]
             y_hat = self.predict(df)
             y = self.real(df)
