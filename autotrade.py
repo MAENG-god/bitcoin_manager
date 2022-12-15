@@ -87,7 +87,7 @@ while True:
         cur_price = ticker['last']
         print(state['position'])
         if state['position'] == None:
-            data = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+            data = dataset(symbol="BTC/USDT", timeframe="4h", limit=12 * 24*20)
             balance = binance.fetch_balance()
             usdt = balance['free']['USDT']
             state['balance'] = usdt
@@ -102,7 +102,7 @@ while True:
                 if state['cutPrice'] > cur_price:
                     close_position(binance, cur_price, state)
                     while True:
-                        newData = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+                        newData = dataset(symbol="BTC/USDT", timeframe="4h", limit=12 * 24*20)
                         if newData.iloc[-2]['body'] - data.iloc[-2]['body'] != 0:
                             break
                         else:
@@ -111,24 +111,24 @@ while True:
                 if state['cutPrice'] < cur_price:
                     close_position(binance, cur_price, state)
                     while True:
-                        newData = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+                        newData = dataset(symbol="BTC/USDT", timeframe="4h", limit=12 * 24*20)
                         if newData.iloc[-2]['body'] - data.iloc[-2]['body'] != 0:
                             break
                         else:
                             time.sleep(10)    
                             
-            newData = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+            newData = dataset(symbol="BTC/USDT", timeframe="4h", limit=12 * 24*20)
             if newData.iloc[-2]['body'] - data.iloc[-2]['body'] != 0:
                 predictor = PredictNextCandle(newData)
                 predict = predictor.excute()
                 if predict == 'up' and state['position'] == "long":
                     messeage = "롱포지션 유지"
                     send_message(messeage)
-                    data = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+                    data = dataset(symbol="BTC/USDT", timeframe="4h", limit=12 * 24*20)
                 elif predict == 'down' and state['position'] == "short":
                     messeage = "숏포지션 유지"
                     send_message(messeage)
-                    data = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+                    data = dataset(symbol="BTC/USDT", timeframe="4h", limit=12 * 24*20)
                 else:
                     close_position(binance, cur_price, state)
                     messeage = "승리 횟수:{}, 패배 횟수: {}".format(state['win'], state['lose'])

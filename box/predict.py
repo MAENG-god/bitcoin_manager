@@ -55,9 +55,9 @@ class predictNextCandle():
                     print("-----------------------")
                     self.win += 1
                     if df.iloc[-1]['body'] > 0:
-                        self.ror *= (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - self.fee
+                        self.ror *= 1 + abs(1 - (df.iloc[-1]['close']/df.iloc[-1]['open'])) * self.leverage - self.fee
                     else:
-                        self.ror *= 2 - (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - self.fee
+                        self.ror *= 1 + abs(1 - (df.iloc[-1]['close']/df.iloc[-1]['open'])) * self.leverage - self.fee
                 else:
                     if y_hat == "up":
                         if df.iloc[-1]['low']/df.iloc[-1]['open'] < 0.99:
@@ -74,14 +74,14 @@ class predictNextCandle():
                     self.loss += abs(df.iloc[-1]['body'])         
                     print("-----------------------")
                     if df.iloc[-1]['body'] > 0:
-                        self.ror *= 2 - (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - self.fee
+                        self.ror *= 1 - abs(1 - (df.iloc[-1]['close']/df.iloc[-1]['open'])) * self.leverage - self.fee
                     else:
-                        self.ror *= (abs(df.iloc[-1]['close']/df.iloc[-1]['open']) * 10 - 9) - self.fee
+                        self.ror *= 1 - abs(1 - (df.iloc[-1]['close']/df.iloc[-1]['open'])) * self.leverage - self.fee
     def summary(self):
         print("예측 정확도: {}%".format(self.win / self.epoch * 100))
         print("이익: {}, 손해: {}, 수익률:{}%".format(self.profit, self.loss, self.ror * 100 - 100))
         print("총 실행 횟수: {}회".format(self.epoch))
-data = dataset(symbol="BTC/USDT", timeframe="1h", limit=12 * 24*20)
+data = dataset(symbol="BTC/USDT", timeframe="4h", limit=12 * 24*20)
 predict = predictNextCandle(data)
 predict.excute()
 predict.summary()

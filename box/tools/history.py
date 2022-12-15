@@ -4,6 +4,7 @@ def history_analysis(df, candle, curRsi):
     upTail = candle['high'] - max(candle['open'], candle['close'])
     downTail = min(candle['open'], candle['close']) - candle['low']
     body = candle['body']
+    vol = candle['volume']
     upPerBody = upTail / abs(body)
     downPerBody = downTail / abs(body)
     candleList = []
@@ -12,6 +13,7 @@ def history_analysis(df, candle, curRsi):
         pastUpTail = df.iloc[i]['high'] - max(df.iloc[i]['open'], df.iloc[i]['close'])
         pastDownTail = min(df.iloc[i]['open'], df.iloc[i]['close']) - df.iloc[i]['low']
         pastBody = df.iloc[i]['body']
+        pastVol = df.iloc[i]['volume']
         
         pastUpPerBody = pastUpTail / (abs(pastBody) + 1)
         pastdownPerBody = pastDownTail / (abs(pastBody) + 1)
@@ -19,8 +21,9 @@ def history_analysis(df, candle, curRsi):
         result = abs(np.array([upPerBody - pastUpPerBody, downPerBody - pastdownPerBody]))
         result = max(result)
         rsiInd = abs(curRsi - pastRsi)
+        volInd = abs(vol - pastVol)
         sameColor = True if body * pastBody > 0 else False
-        if result < 0.5 and rsiInd < 5 and sameColor:
+        if result < 0.5 and rsiInd < 2 and sameColor and volInd < 10000:
             if result == 0:
                 break
             if df.iloc[i + 1]['body'] > 0:
