@@ -44,29 +44,10 @@ def volume(df):
     
 #이평선
 def ma(df):
-    ma3 = sum(df.iloc[-1:-4:-1]['close']) / 3
-    ma7 = sum(df.iloc[-1:-8:-1]['close']) / 7
-    ma25 = sum(df.iloc[-1:-26:-1]['close']) / 25
-    # ma_1 = ma7 - ma25
-    
-    # ma7 = sum(df.iloc[-2:-9:-1]['close']) / 7
-    # ma25 = sum(df.iloc[-2:-27:-1]['close']) / 25
-    # ma_2 = ma7 - ma25
-    
-    # ma7 = sum(df.iloc[-3:-10:-1]['close']) / 7
-    # ma25 = sum(df.iloc[-3:-28:-1]['close']) / 25
-    # ma_3 = ma7 - ma25
-    
-   
-    # if ma_1 - ma_2 > 0 and ma_2 - ma_3 > 0:
-    #     return "long"
-    # elif ma_1 - ma_2 < 0 and ma_2 - ma_3 < 0:
-    #     return "short"
-    if ma3 > ma7 and ma7 > ma25:
-        return "long"
-    elif ma3 < ma7 and ma7 < ma25:
-        return "short"
-    
+    ma5 = sum(df.iloc[-1:-6:-1]['close']) / 5
+    ma10 = sum(df.iloc[-1:-11:-1]['close']) / 10
+    return ma5 - ma10
+
 #맹's 캔들 5개로 상승추세 하강추세 분석
 def five_candle(df):
     candles = df.iloc[-1:-6:-1]['body']

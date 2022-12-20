@@ -15,13 +15,14 @@ class predictNextCandle():
         
     def predict(self, df):
         curRsi = rsi(df.iloc[-16:-1])
-        percent = history_analysis(self.df, df.iloc[-2], curRsi)
+        curMa = ma(df.iloc[-16:-1])
+        percent = history_analysis(self.df, df.iloc[-2], df.iloc[-3], curRsi, curMa)
         if percent == None:
             return "none"
-        elif percent > 50:
+        elif percent > 50 and curRsi < 50:
             print("올라갈 확률:{}".format(percent))
             return "up"
-        elif percent < 50:
+        elif percent < 50 and curRsi > 50:
             print("내려갈 확률:{}".format(100 - percent))
             return "down"
         else:
@@ -32,7 +33,7 @@ class predictNextCandle():
         else:
             return "down"
     def excute(self):
-        for i in range(1405, 1498):
+        for i in range(1400, 1498):
             df = self.df[0:i + 2]
             y_hat = self.predict(df)
             y = self.real(df)
